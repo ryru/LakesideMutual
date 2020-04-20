@@ -9,8 +9,12 @@ RUN npm run build
 
 FROM nginx:stable-alpine
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
+COPY fix-permissions.sh /bin/
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
-EXPOSE 80
+RUN fix-permissions.sh /var/cache/nginx
+RUN fix-permissions.sh /usr/share/nginx/html
+RUN fix-permissions.sh /var/run/
+EXPOSE 8080
 WORKDIR /usr/share/nginx/html
 
 RUN apk add --no-cache nodejs npm
